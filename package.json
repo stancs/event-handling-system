@@ -1,0 +1,19 @@
+{
+  "name": "kindhealth",
+  "version": "1.0.0",
+  "description": "KindHealth Coding Challenge",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm start test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stanley-lee/kindhealth.git"
+  },
+  "author": "Stanley Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stanley-lee/kindhealth/issues"
+  },
+  "homepage": "https://github.com/stanley-lee/kindhealth#readme"
+}
