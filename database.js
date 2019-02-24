@@ -2,6 +2,7 @@ const pg = require('pg');
 const _ = require('lodash');
 const Logger = require('./logger');
 
+// Connection address string for the default Postgres Database
 const connectionString = process.env.DATABASE_URL 
                         || 'postgres://localhost:5432/postgres';
 
@@ -23,11 +24,6 @@ class Database {
                 Logger.log('error', err.stack);
             });
     }
-
-    // createDatabase() {
-    //     const createDatabaseSql = `CREATE DATABASE kindhealth;`;
-    //     return query(createDatabaseSql);
-    // }
 
     createTable() {
         Logger.log('debug', 'Create Table');

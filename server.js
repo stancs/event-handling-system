@@ -80,7 +80,7 @@ app.post('/events', (req, res) => {
         date,
         user,
         type,
-        message,
+        "message(event)": message,      // winston shows prop "message" to the log directly
         otheruser
     });
 
