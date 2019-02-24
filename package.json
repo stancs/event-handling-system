@@ -12,8 +12,9 @@
   },
   "devDependencies": {},
   "scripts": {
+    "debug": "LOG_LEVEL='debug' npm start",
     "test": "npm run test",
-    "start": "node server.js"
+    "start": "PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node server.js"
   },
   "repository": {
     "type": "git",
