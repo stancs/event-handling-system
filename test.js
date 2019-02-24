@@ -1,11 +1,13 @@
 const request = require('request');
 
-const samples = 100;
+const samples = 10;
 
-const quarter = Math.floor(samples * 0.25);
-const maxEnters = quarter;
-const maxHighfives = quarter;
-const maxLeaves = quarter;
+
+const maxRatio = 0.30;
+const maxNum = Math.floor(samples * maxRatio);
+const maxEnters = maxNum;
+const maxHighfives = maxNum;
+const maxLeaves = maxNum;
 
 const getRandom = max => Math.floor(Math.random() * max);
 
@@ -13,7 +15,7 @@ const enters = getRandom(maxEnters);
 const highfives = getRandom(maxHighfives);
 const leaves = getRandom(maxLeaves);
 const comments = samples - enters - highfives - leaves;
-const sampleSet = {
+let sampleSet = {
     enters,
     comments,
     highfives,
@@ -50,11 +52,11 @@ const getRandomType = (sampleSet) => {
             sampleSet.leaves--;
             break;
     }
-    return {type, sampleSet};
+    return {type, newSampleSet: sampleSet};
 }
 
-const getRandomUser = 'user_' + getRandom(userSamples);
-const getRandomMessage = 'message_' + getRandom(messageSamples);
+const getRandomUser = () => 'user_' + getRandom(userSamples);
+const getRandomMessage = () => 'message_' + getRandom(messageSamples);
 const goFiftyFifty = () => getRandom(2);      // 0 or 1 with 50% probability
 const getRandomDate = (from, to) => {
     const fromUtc = from.getTime();
@@ -67,23 +69,32 @@ console.log(`Randomly assigned types: enters(${enters}), comments(${comments}), 
 console.log(`${from} = ${fromDate} UTC`);
 console.log(`${to} = ${toDate} UTC`);
 
-const event = {
-    date: getRandomDate(fromDate, toDate).toISOString(),
-    user: getRandomUser,
-    type: getRandomType(sampleSet).type,
-    message: goFiftyFifty() === 0? null: getRandomMessage,
-    otheruser: goFiftyFifty() === 0? null: getRandomUser
-};
-console.log(event);
-// for (let i = 0; i < samples; i++) {
-// }
 
-request.post('http://localhost:3000/events', event, (error, response, body) => {
-    console.log('==== Submit Event Response ====');
-    console.log('error:', error);
-    console.log('statusCode:', response && response.statusCode);
-    console.log('body:', body);
-})
+for (let i = 0; i < samples; i++) {
+    const {type, newSampleSet} = getRandomType(sampleSet);
+    
+    console.log('type = ' + type);
+    console.log('newSampleSet = ');
+    console.log(newSampleSet);
+
+    const event = {
+        date: getRandomDate(fromDate, toDate).toISOString(),
+        user: getRandomUser(),
+        message: goFiftyFifty() === 0? null: getRandomMessage(),
+        otheruser: goFiftyFifty() === 0? null: getRandomUser(),
+        type
+    };
+    console.log(event);
+
+    request.post('http://localhost:3000/events', { json: event }, (error, response, body) => {
+        console.log('==== Submit Event Response ====');
+        console.log('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+        console.log('body:', body);
+    });
+    sampleSet = newSampleSet  
+}
+
 
 // request(`http://localhost:3000/events?from=${from}&to=${to}`, (error, response, body) => {
 //     console.log('==== List Event Response ====');

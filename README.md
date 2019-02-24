@@ -21,6 +21,18 @@ passwd
 passwd
 \q
 
+```
+administrator@allen:~/code/coding-challenge/backend-challenge-kh$ sudo -u postgres psql postgres
+psql (10.3 (Ubuntu 10.3-1))
+Type "help" for help.
+
+postgres-# \password postgres
+Enter new password: 
+Enter it again: 
+postgres-# \q
+
+```
+
 http://connect.boundlessgeo.com/docs/suite/4.6/dataadmin/pgGettingStarted/firstconnect.html
 
 sudo -i (root)
