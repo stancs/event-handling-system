@@ -1,3 +1,3 @@
 #bin/bash
-curl "http://localhost:3000/events?from=1995-10-01T08:00:00Z&to=1995-10-30T09:00:00Z"
+curl "http://localhost:3000/events?from=2019-01-01T00:00:00Z&to=2019-01-30T23:59:59Z"
 
