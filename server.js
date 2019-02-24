@@ -41,7 +41,7 @@ app.get('/events/summary', (req, res) => {
     Logger.log('info', 'HTTP GET /events/summary', {
         from,
         to,
-        by
+        timeframe
     });
 
     return Db.summaryEvents(from, to, timeframe)

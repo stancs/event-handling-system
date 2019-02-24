@@ -66,7 +66,7 @@ class Database {
 
         const clearSql = `DELETE FROM event;`;
 
-        Logger.log('debug', `SQL: ${insertSql}`);
+        Logger.log('debug', `SQL: ${clearSql}`);
 
         return this.query(clearSql);
     }
