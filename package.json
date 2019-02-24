@@ -1,19 +1,28 @@
 {
-  "name": "kindhealth",
+  "name": "backend-challenge-kh",
   "version": "1.0.0",
-  "description": "KindHealth Coding Challenge",
+  "description": "Backend Programming Challenge",
   "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "pg": "^7.8.1",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {},
   "scripts": {
-    "test": "npm start test"
+    "test": "npm run test",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stanley-lee/kindhealth.git"
+    "url": "git+https://github.com/stanley-lee/backend-challenge-kh.git"
   },
   "author": "Stanley Lee",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/stanley-lee/kindhealth/issues"
+    "url": "https://github.com/stanley-lee/backend-challenge-kh/issues"
   },
-  "homepage": "https://github.com/stanley-lee/kindhealth#readme"
+  "homepage": "https://github.com/stanley-lee/backend-challenge-kh#readme"
 }
