@@ -23,7 +23,7 @@ app.get('/events', (req, res) => {
             Logger.log('debug', 'ListEvents Response: ', {
                 response: data
             });
-            res.json(data);
+            res.status(200).json(data);
         })
         .catch(err => {
             Logger.log('error', 'Error in ListEvents', err);
@@ -49,7 +49,7 @@ app.get('/events/summary', (req, res) => {
             Logger.log('debug', 'SummaryEvents Response: ', {
                 response: data
             });
-            res.json(data);
+            res.status(200).json(data);
         })
         .catch(err => {
             Logger.log('error', 'Error in SummaryEvents', err);
@@ -63,7 +63,7 @@ app.post('/events/clear', (req, res) => {
     return Db.clear()
         .then(data => {
             Logger.log('debug', 'Clear Success');
-            res.json({ status: 'ok' });
+            res.status(200).json({ status: 'ok' });
         })
         .catch(err => {
             Logger.log('error', 'Error in Clear', err);
@@ -87,7 +87,7 @@ app.post('/events', (req, res) => {
     return Db.insert({date, user, type, message, otheruser})
         .then(() => {
             Logger.log('debug', 'InsertEvent Success');
-            res.json({ status: 'ok' });
+            res.status(200).json({ status: 'ok' });
         })
         .catch(err => {
             Logger.log('error', 'Error in InsertEvent', err);
