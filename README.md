@@ -1,84 +1,184 @@
 # kindhealth
 Backend Programming Challenge
 
+## Installing related NPM packages
+
+This program uses 3rd party npm packages as below:
+- body-parser
+- express
+- lodash
+- pg
+- sync-request
+- winston
+
+To install these packages, Node.js should be installed (`https://nodejs.org/en/`)
+
+In Node.js environment, run this command
+
+```
+npm install
+```
 
 ## PostgreSQL installation
+This application uses PostgresSQL as a database. In Ubuntu, the installation process is like this:
 
+### Install DB
+1. Install PostgreSQL and necessary server software
+```
 sudo apt-get install postgresql postgresql-contrib
+```
 
+2. Configure PostgreSQL to startup upon server boot
+```
 sudo update-rc.d postgresql enable
+```
 
+3. Start PostgreSQL
+```
 sudo service postgresql start
+```
+[https://www.godaddy.com/garage/how-to-install-postgresql-on-ubuntu-14-04/]
 
-https://www.godaddy.com/garage/how-to-install-postgresql-on-ubuntu-14-04/
 
-But in Ubuntu system, there is no default password set
+### Password Set
+On Windows and OS X, the default password is `postgres`, but in Ubuntu, there is no default password set
 
+1. Run the `psql` command from the postgres user account:
+```
 sudo -u postgres psql postgres
+```
+
+2. Set the password:
+```
 \password postgres
+```
+3. Enter the password (I set it as `passwd`)
 
-passwd
-passwd
+4. Close psql
+```
 \q
-
-```
-administrator@allen:~/code/coding-challenge/backend-challenge-kh$ sudo -u postgres psql postgres
-psql (10.3 (Ubuntu 10.3-1))
-Type "help" for help.
-
-postgres-# \password postgres
-Enter new password: 
-Enter it again: 
-postgres-# \q
-
 ```
 
-http://connect.boundlessgeo.com/docs/suite/4.6/dataadmin/pgGettingStarted/firstconnect.html
+[http://connect.boundlessgeo.com/docs/suite/4.6/dataadmin/pgGettingStarted/firstconnect.html
+]
 
-sudo -i (root)
-su - postgres
-psql
+## How to start the application
+To start the server, the user can enter 'npm start' 
 
-http://localhost:3000/event/summary?from=2019-02-20T08:08:12.983Z&to=2019-02-20T08:08:13.983Z
+(default log level is `info`)
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm start
+
+> backend-challenge-kh@1.0.0 start /home/administrator/code/coding-exercise/backend-challenge-kh
+> PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node server.js
+
+info: Express server listening on port 3000 {"timestamp":"2019-02-25 06:22:46"}
+info: Database connected {"timestamp":"2019-02-25 06:22:46"}
+```
+
+For development purpose, 'npm run debug' would start the server with `debug` log level)
+
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm run debug
+
+> backend-challenge-kh@1.0.0 debug /home/administrator/code/coding-exercise/backend-challenge-kh
+> LOG_LEVEL='debug' npm start
 
 
-PSQL commands
-CREATE DATABASE kindhealth;
-CREATE TABLE event(
-    event_id serial PRIMARY KEY,
-    date TIMESTAMP NOT NULL,
-    "user" VARCHAR(50) NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    message VARCHAR(355),
-    otheruser VARCHAR (50)
-);
+> backend-challenge-kh@1.0.0 start /home/administrator/code/coding-exercise/backend-challenge-kh
+> PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node server.js
 
-DROP TABLE event;
+info: Express server listening on port 3000 {"timestamp":"2019-02-25 06:25:48"}
+info: Database connected {"timestamp":"2019-02-25 06:25:48"}
+debug: Create Table {"timestamp":"2019-02-25 06:25:48"}
+debug: SQL: CREATE TABLE IF NOT EXISTS event(
+            event_id serial PRIMARY KEY,
+            date TIMESTAMP WITH TIME ZONE NOT NULL,
+            "user" VARCHAR(50) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            message VARCHAR(355),
+            otheruser VARCHAR (50)
+        ); {"timestamp":"2019-02-25 06:25:48"}
+debug: DB Query Success {"timestamp":"2019-02-25 06:25:48"}
 
-INSERT INTO event (date, "user", type)
-VALUES
-('1995-10-01t09:00:00Z','Doc','enter'),
-('1995-10-02t09:00:00Z','Doc2','leave'),
-('1995-10-03t09:00:00Z','Doc3','leave'),
-('1995-10-04t09:00:00Z','Doc4','comment'),
-('1995-10-05t09:00:00Z','Doc5','comment'),
-('1995-10-06t09:00:00Z','Doc6','comment'),
-('1995-10-07t09:00:00Z','Doc7','highfive'),
-('1995-10-08t09:00:00Z','Doc8','highfive'),
-('1995-10-09t09:00:00Z','Doc9','highfive'),
-('1995-10-10t09:00:00Z','Doc10','highfive');
+```
 
-DELETE FROM event;
+## How to run the test suite
 
-SELECT * FROM event WHERE date >= '1995-10-04t08:00:00Z' AND date <= '1995-10-09t10:00:00Z';
+### Individual test script
+`/script` folder contains bash shell script files to run individual HTTP GET/POST requests on the local server. 
 
-SELECT 
-    DATE_TRUNC('minute', date),
-    COUNT(CASE type WHEN 'enter' THEN 1 ELSE NULL END) as enters,
-    COUNT(CASE type WHEN 'leave' THEN 1 ELSE NULL END) as leaves,
-    COUNT(CASE type WHEN 'comment' THEN 1 ELSE NULL END) as comments,
-    COUNT(CASE type WHEN 'highfive' THEN 1 ELSE NULL END) as highfives
-FROM event WHERE date >= '1995-10-01t08:00:00Z' AND date <= '1995-10-14t10:00:00Z'
-GROUP BY DATE_TRUNC('minute', date);
+| shell script     | Test                 | Comments                  |
+| -----------------|:--------------------:| -------------------------:|
+| event.sh         | Submit Event         |                           |
+| event-error.sh   | Submit Event(error)  | POST parameter is missing |
+| clear.sh         | Clear Data           |                           |
+| list.sh          | List Events          |                           |
+| list-error.sh    | List Events(error)   | GET parameter is missing  |
+| summary.sh       | Event Summary        |                           |
+| summary-error.sh | Event Summary(error) | GET parameter is missing  |
+
+[Examples]
+
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./event.sh 
+{"status":"ok"}
+```
+
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary.sh 
+{"events":[{"date":"2019-01-01T09:00:00.000Z","enters":"1","leaves":"0","comments":"0","highfives":"0"}]}
+```
+
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary-error.sh 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Error: Missing Parameter(s)<br> &nbsp; &nbsp;at app.get (/home/administrator/code/coding-exercise/backend-challenge-kh/server.js:46:15)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/route.js:137:13)<br> &nbsp; &nbsp;at Route.dispatch (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/route.js:112:3)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at /home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/index.js:281:22<br> &nbsp; &nbsp;at Function.process_params (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at urlencodedParser (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/body-parser/lib/types/urlencoded.js:91:7)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/administrator/code/coding-exercise/backend-challenge-kh/node_modules/express/lib/router/layer.js:95:5)</pre>
+</body>
+</html>
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$
+```
+
+### `Event Summary` test 
+Since `Event Summary` request is somewhat complicated so that it might be hard to test it if you don't put quite many sample data.
+
+`test.js` is generating event data randomly with given sample sizes. There are `enter`, `comment`, `highfive`, and `leave` type of events. The test script will generate one of these events randomly, and compute the summary beforehand so that we can compare with the `Event Summary` responose.
+
+To run this test script, run `node test.js`
+
+```
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ node test.js
+==== Clear Data Response: START ====
+statusCode = 200
+body = {"status":"ok"}
+==== Clear Data Response: END ====
+Sample Count = 100
+Randomly assigned types: enters(13), comments(58), highfives(4), leaves(25)
+2019-01-01T06:00:00Z = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time) UTC
+2019-01-30T11:59:59Z = Wed Jan 30 2019 05:59:59 GMT-0600 (Central Standard Time) UTC
+
+...
+
+==== List Event Response: END ====
+SUCCESS: The number of events in ListEvent response is matching with the sample size
+==== Event Summary Response: START ====
+==== Event Summary Response: END ====
+For timeframe-day, the test is SUCCESS
+==== Event Summary Response: START ====
+==== Event Summary Response: END ====
+For timeframe-hour, the test is SUCCESS
+==== Event Summary Response: START ====
+==== Event Summary Response: END ====
+For timeframe-minute, the test is SUCCESS
+```
+
+
+## 
 
 

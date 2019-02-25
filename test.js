@@ -1,15 +1,17 @@
 const request = require('sync-request');
 
+// Sample size
 const samples = 100;
 
 
+const getRandom = max => Math.floor(Math.random() * max);
+
+// Set random numbers for enters, highfives, leaves, and comments
 const maxRatio = 0.30;
 const maxNum = Math.floor(samples * maxRatio);
 const maxEnters = maxNum;
 const maxHighfives = maxNum;
 const maxLeaves = maxNum;
-
-const getRandom = max => Math.floor(Math.random() * max);
 
 const enters = getRandom(maxEnters);
 const highfives = getRandom(maxHighfives);
@@ -22,15 +24,18 @@ let sampleSet = {
     leaves
 };
 
+// Set the numbers of user samples and message samples
 const userSamples = 100;
 const messageSamples = 1000;
 
+// Set the period (from and to)
 const from = '2019-01-01T06:00:00Z';
 const to = '2019-01-30T11:59:59Z';
 
 const fromDate = new Date(from);
 const toDate = new Date(to);
 
+// From the sample set, get one of the type and decrease the number of related elements
 const getRandomType = (sampleSet) => {
     let type = null;
 
@@ -108,14 +113,15 @@ const stat = {
     minute: {}
 };
 
+// For each sample, submit the event to the server and record expected stat (by day, hour, minutes)
 for (let i = 0; i < samples; i++) {
     const type = getRandomType(sampleSet);
     if (type === null) {
         console.log(`Sample index(0~${samples}): ${i}`);
     }
-    console.log('type = ' + type);
-    console.log('sampleSet = ');
-    console.log(sampleSet);
+    // console.log('type = ' + type);
+    // console.log('sampleSet = ');
+    // console.log(sampleSet);
 
     const randomDate = new Date(getRandomDate(fromDate, toDate));
     const dateIso = randomDate.toISOString();
@@ -145,10 +151,10 @@ for (let i = 0; i < samples; i++) {
     const rolledUpByHour = rolledUpByHourDate.toISOString();
     const rolledUpByMinute = rolledUpByMinuteDate.toISOString();
 
-    console.log('iso string       = ' + randomDate.toISOString());
-    console.log('rolled up day    = ' + rolledUpByDay);
-    console.log('rolled up hour   = ' + rolledUpByHour);
-    console.log('rolled up minute = ' + rolledUpByMinute);
+    // console.log('iso string       = ' + randomDate.toISOString());
+    // console.log('rolled up day    = ' + rolledUpByDay);
+    // console.log('rolled up hour   = ' + rolledUpByHour);
+    // console.log('rolled up minute = ' + rolledUpByMinute);
 
     const prop = type + 's';
     console.log('prop = ' + prop);
@@ -183,7 +189,8 @@ for (let i = 0; i < samples; i++) {
     stat.minute[rolledUpByMinute][prop]++;
 }
 
-console.log('stat');
+
+console.log('Expected stat result:');
 console.log(stat);
 
 console.log('==== List Event Response: START ====');
@@ -211,12 +218,8 @@ timeframes.forEach(timeframe => {
     console.log('==== Event Summary Response: END ====');
     let success = true;
     summaryEventJson.events.forEach(event => {
-        // console.log('event');
-        // console.log(event);
         const statItem = stat[timeframe][event.date];
-        // console.log('statItem');
-        // console.log(statItem);
-
+        
         Object.keys(statItem).forEach(key => {
             if (statItem[key] !== parseInt(event[key])) {
                 success = false;
@@ -226,6 +229,8 @@ timeframes.forEach(timeframe => {
             }
         })
     });
+
+    // Print over-all sucess or failure
     if (success) {
         console.log(`For timeframe-${timeframe}, the test is SUCCESS`);
     } else {
