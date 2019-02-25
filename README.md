@@ -182,9 +182,9 @@ For timeframe-minute, the test is SUCCESS
 ## Note
 Due to timezone offset, roll-up-date might be changes. In the example, if the time is `1985-10-26T09:01:55Z`, the roll-up-dates are like this:
 
-Rolled up date for the day   : `1985-10-26T00:00:00Z`
-Rolled up date for the hour  : `1985-10-26T09:00:00Z`
-Rolled up date for the minute: `1985-10-26T09:01:00Z`
+- Rolled up date for the day   : `1985-10-26T00:00:00Z`
+- Rolled up date for the hour  : `1985-10-26T09:00:00Z`
+- Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
 However, the timezone that I'm living is GMT-06:00. So if you roll up the date for the day, it would be 06:00AM. PostgresSQL do the same thing with DATE_TRUNC(...) function. 
 
@@ -201,9 +201,9 @@ undefined
 
 So if you run this program around Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' wll be like this:
 
-Rolled up date for the day   : `1985-10-26T06:00:00Z`
-Rolled up date for the hour  : `1985-10-26T09:00:00Z`
-Rolled up date for the minute: `1985-10-26T09:01:00Z`
+- Rolled up date for the day   : `1985-10-26T06:00:00Z`
+- Rolled up date for the hour  : `1985-10-26T09:00:00Z`
+- Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
 
 
