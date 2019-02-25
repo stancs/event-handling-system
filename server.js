@@ -13,6 +13,10 @@ app.get('/events', (req, res) => {
     const from = req.query.from;
     const to = req.query.to;
 
+    if (!from || !to) {
+        throw new Error('Missing Parameter(s)');
+    }
+
     Logger.log('info', 'HTTP GET /events', {
         from,
         to
@@ -37,6 +41,10 @@ app.get('/events/summary', (req, res) => {
     const from = req.query.from;
     const to = req.query.to;
     const timeframe = req.query.by;
+
+    if (!from || !to || !timeframe) {
+        throw new Error('Missing Parameter(s)');
+    }
 
     Logger.log('info', 'HTTP GET /events/summary', {
         from,
@@ -75,6 +83,10 @@ app.post('/events/clear', (req, res) => {
 
 app.post('/events', (req, res) => {
     const { date, user, type, message, otheruser } = req.body;
+
+    if (!date || !user || !type) {
+        throw new Error('Missing Parameter(s)');
+    }
     
     Logger.log('info', 'HTTP POST /events', {
         date,

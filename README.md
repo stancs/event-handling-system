@@ -2,7 +2,7 @@
 Backend Programming Challenge
 
 
-PostgreSQL installation
+## PostgreSQL installation
 
 sudo apt-get install postgresql postgresql-contrib
 

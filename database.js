@@ -30,7 +30,7 @@ class Database {
         
         const createTableSql = `CREATE TABLE IF NOT EXISTS event(
             event_id serial PRIMARY KEY,
-            date TIMESTAMP NOT NULL,
+            date TIMESTAMP WITH TIME ZONE NOT NULL,
             "user" VARCHAR(50) NOT NULL,
             type VARCHAR(50) NOT NULL,
             message VARCHAR(355),
