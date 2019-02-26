@@ -1,6 +1,10 @@
 # kindhealth
 Backend Programming Challenge
 
+## Presentation
+
+[Presentation Slides](https://docs.google.com/presentation/d/1tYVyJ_xcO_kjnk1ZsE3bJOZpqGOEKNKtYGQdv9Y7FzY/edit?usp=sharing)
+
 ## Installing related NPM packages
 
 This program uses 3rd party npm packages as below:
