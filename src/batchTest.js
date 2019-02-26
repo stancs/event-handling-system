@@ -1,9 +1,15 @@
 const request = require('sync-request');
 
-// Sample size
+// Sample size - Tester can change this number to adjust the number of events that will be stored in the database
 const samples = 100;
 
+// Set the numbers of user samples and message samples
+const userSamples = 100;
+const messageSamples = 1000;
 
+/**
+ * Random function: Choose a number between 0, 1, 2, ..., (max-1)
+ */
 const getRandom = max => Math.floor(Math.random() * max);
 
 // Set random numbers for enters, highfives, leaves, and comments
@@ -12,21 +18,18 @@ const maxNum = Math.floor(samples * maxRatio);
 const maxEnters = maxNum;
 const maxHighfives = maxNum;
 const maxLeaves = maxNum;
-
 const enters = getRandom(maxEnters);
 const highfives = getRandom(maxHighfives);
 const leaves = getRandom(maxLeaves);
 const comments = samples - enters - highfives - leaves;
+
+// Construct a sample set with randomly selected numbers of each type
 let sampleSet = {
     enters,
     comments,
     highfives,
     leaves
 };
-
-// Set the numbers of user samples and message samples
-const userSamples = 100;
-const messageSamples = 1000;
 
 // Set the period (from and to)
 const from = '2019-01-01T06:00:00Z';
@@ -35,7 +38,12 @@ const to = '2019-01-30T11:59:59Z';
 const fromDate = new Date(from);
 const toDate = new Date(to);
 
-// From the sample set, get one of the type and decrease the number of related elements
+/**
+ * To submit previously assigned event types to the server, counting each type is needed
+ * before we send each request to the server.
+ * The function returns one of the event type existing in the sample set
+ * and decrease the number of that event type to count
+ */
 const getRandomType = (sampleSet) => {
     let type = null;
 
@@ -83,6 +91,7 @@ const getRandomType = (sampleSet) => {
     return type;
 }
 
+// Several function to randomly choose user name, messages, and random date
 const getRandomUser = () => 'user_' + getRandom(userSamples);
 const getRandomMessage = () => 'message_' + getRandom(messageSamples);
 const goFiftyFifty = () => getRandom(2);      // 0 or 1 with 50% probability
@@ -92,27 +101,43 @@ const getRandomDate = (from, to) => {
     return new Date(fromUtc + Math.random() * (toUtc - fromUtc));
 }
 
-let res;
-
-console.log('==== Clear Data Response: START ====');
-res = request('POST', 'http://localhost:3000/events/clear', { json: {} });
-console.log('statusCode = ' + res.statusCode);
-console.log('body = ' + res.getBody('utf-8'));
-console.log('==== Clear Data Response: END ====');
-
+console.log('========== Test Setup (START) ==========')
 console.log(`Sample Count = ${samples}`);
 console.log(`Randomly assigned types: enters(${enters}), comments(${comments}), highfives(${highfives}), leaves(${leaves})`);
-console.log(`${from} = ${fromDate} UTC`);
-console.log(`${to} = ${toDate} UTC`);
-
+console.log(`From: ${from} = ${fromDate} UTC`);
+console.log(`To  : ${to} = ${toDate} UTC`);
 console.log('sampleSet = ');
 console.log(sampleSet);
+console.log('========== Test Setup (END)    ==========')
+
+
+// Response object
+let res;
+
+// Stat data that stores expected event summary data beforehand
 const stat = {
     day: {},
     hour: {},
     minute: {}
 };
 
+/**
+ * Clear Data Test: Clean all the pre-existing data
+ */
+console.log('==== Clear Data Response: START ====');
+res = request('POST', 'http://localhost:3000/events/clear', { json: {} });
+console.log('statusCode = ' + res.statusCode);
+console.log('body = ' + res.getBody('utf-8'));
+console.log('==== Clear Data Response: END ====');
+
+
+/**
+ * Submit Events Test:
+ * Request previously assigned numbers of event types to the server so that those events 
+ * will be stored in the database. 
+ * Stat is recording the rollup date for day, hour, minute and counting them to compare it with 
+ * response data from 'Summary Event' request later
+ */
 // For each sample, submit the event to the server and record expected stat (by day, hour, minutes)
 for (let i = 0; i < samples; i++) {
     const type = getRandomType(sampleSet);
@@ -189,10 +214,14 @@ for (let i = 0; i < samples; i++) {
     stat.minute[rolledUpByMinute][prop]++;
 }
 
-
+// Print out the expected stat data with each roll-up-date (day, hour, minute)
 console.log('Expected stat result:');
 console.log(stat);
 
+/**
+ * List Event Test:
+ * Get all the events stored in the server, print them out, and check the numbers are matching
+ */
 console.log('==== List Event Response: START ====');
 res = request('GET', `http://localhost:3000/events?from=${from}&to=${to}`);
 console.log('statusCode = ' + res.statusCode);
@@ -206,17 +235,25 @@ if (listEventJson.events.length === samples) {
     console.log('ERROR: The number of events in ListEvent response does NOT match with the sample size');
 }
 
-
+/**
+ * Summary Event Test:
+ * For each roll-up-date type (day, hour, minute), get the response for 'Summary Event' request.
+ * Then, compare the response with previously counted stat result to make sure event summary works fine
+ */
 const timeframes = ['day', 'hour', 'minute'];
 timeframes.forEach(timeframe => {
-    console.log('==== Event Summary Response: START ====');
+    console.log(`==== Event Summary (${timeframe}) Response: START ====`);
     res = request('GET', `http://localhost:3000/events/summary?from=${from}&to=${to}&by=${timeframe}`);
-    // console.log('statusCode = ' + res.statusCode);
+    console.log('statusCode = ' + res.statusCode);
     // console.log('body: ');
     const summaryEventJson = JSON.parse(res.getBody());
+    // Omit this result due to too many lines
     // console.log(JSON.stringify(summaryEventJson, undefined, 4));
-    console.log('==== Event Summary Response: END ====');
+    console.log(`==== Event Summary (${timeframe}) Response: END ====`);
+    
+    // If any of props are different, the overall result is failure
     let success = true;
+    
     summaryEventJson.events.forEach(event => {
         const statItem = stat[timeframe][event.date];
         
@@ -232,8 +269,8 @@ timeframes.forEach(timeframe => {
 
     // Print over-all sucess or failure
     if (success) {
-        console.log(`For timeframe-${timeframe}, the test is SUCCESS`);
+        console.log(`For roll-up-date by ${timeframe}, the test is SUCCESS`);
     } else {
-        console.log(`For timeframe-${timeframe}, the test is FAILURE`);
+        console.log(`For roll-up-date by ${timeframe}, the test is FAILURE`);
     }
 });

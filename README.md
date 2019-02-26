@@ -108,15 +108,15 @@ debug: DB Query Success {"timestamp":"2019-02-25 06:25:48"}
 ### Individual test script
 `/script` folder contains bash shell script files to run individual HTTP GET/POST requests on the local server. 
 
-| shell script     | Test                 | Comments                  |
-| -----------------|:--------------------:| -------------------------:|
-| event.sh         | Submit Event         |                           |
-| event-error.sh   | Submit Event(error)  | POST parameter is missing |
-| clear.sh         | Clear Data           |                           |
-| list.sh          | List Events          |                           |
-| list-error.sh    | List Events(error)   | GET parameter is missing  |
-| summary.sh       | Event Summary        |                           |
-| summary-error.sh | Event Summary(error) | GET parameter is missing  |
+| shell script     | Test                 | Comments                                |
+| -----------------|:--------------------:| ---------------------------------------:|
+| event.sh         | Submit Event         |                                         |
+| event-error.sh   | Submit Event(error)  | POST parameter is missing (Failure test)|
+| clear.sh         | Clear Data           |                                         |
+| list.sh          | List Events          |                                         |
+| list-error.sh    | List Events(error)   | GET parameter is missing (Failure test) |
+| summary.sh       | Event Summary        |                                         |
+| summary-error.sh | Event Summary(error) | GET parameter is missing (Failure test) |
 
 [Examples]
 
@@ -145,12 +145,12 @@ administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summa
 administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$
 ```
 
-### `Event Summary` test 
-Since `Event Summary` request is somewhat complicated so that it might be hard to test it if you don't put quite many sample data.
+### Batch Test for `Event Summary`
+To test `Event Summary` request, plenty of sample data should be stored in advance.
 
-`test.js` is generating event data randomly with given sample sizes. There are `enter`, `comment`, `highfive`, and `leave` type of events. The test script will generate one of these events randomly, and compute the summary beforehand so that we can compare with the `Event Summary` responose.
+`src/batchTest.js` is generating event data randomly with given sample sizes (default is set as 100) and send HTTP POST request to insert event data to the backend server. There are four types of events-`enter`, `comment`, `highfive`, and `leave`. The batch test script will generate one of these events randomly, and compute the summary beforehand so that the tester can compare it with the `Event Summary` responose.
 
-To run this test script, run `node test.js`
+To run this test script, run `npm run test`
 
 ```
 administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ node test.js

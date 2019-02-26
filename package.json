@@ -8,13 +8,14 @@
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "pg": "^7.8.1",
-    "sync-request": "^6.0.0",
     "winston": "^3.2.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "sync-request": "^6.0.0"
+  },
   "scripts": {
     "debug": "LOG_LEVEL='debug' npm start",
-    "test": "npm run test",
+    "test": "node src/batchTest.js",
     "start": "PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node src/server.js"
   },
   "repository": {
