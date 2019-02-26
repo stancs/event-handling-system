@@ -104,8 +104,8 @@ const getRandomDate = (from, to) => {
 console.log('========== Test Setup (START) ==========')
 console.log(`Sample Count = ${samples}`);
 console.log(`Randomly assigned types: enters(${enters}), comments(${comments}), highfives(${highfives}), leaves(${leaves})`);
-console.log(`From: ${from} = ${fromDate} UTC`);
-console.log(`To  : ${to} = ${toDate} UTC`);
+console.log(`From: ${from} UTC = ${fromDate}`);
+console.log(`To  : ${to} UTC = ${toDate}`);
 console.log('sampleSet = ');
 console.log(sampleSet);
 console.log('========== Test Setup (END)    ==========')
@@ -135,7 +135,7 @@ console.log('==== Clear Data Response: END ====');
  * Submit Events Test:
  * Request previously assigned numbers of event types to the server so that those events 
  * will be stored in the database. 
- * Stat is recording the rollup date for day, hour, minute and counting them to compare it with 
+ * Stat is recording the rolled-up-date for day, hour, minute and counting them to compare it with 
  * response data from 'Summary Event' request later
  */
 // For each sample, submit the event to the server and record expected stat (by day, hour, minutes)
@@ -237,7 +237,7 @@ if (listEventJson.events.length === samples) {
 
 /**
  * Summary Event Test:
- * For each roll-up-date type (day, hour, minute), get the response for 'Summary Event' request.
+ * For each rolled-up-date type (day, hour, minute), get the response for 'Summary Event' request.
  * Then, compare the response with previously counted stat result to make sure event summary works fine
  */
 const timeframes = ['day', 'hour', 'minute'];
@@ -269,8 +269,8 @@ timeframes.forEach(timeframe => {
 
     // Print over-all sucess or failure
     if (success) {
-        console.log(`For roll-up-date by ${timeframe}, the test is SUCCESS`);
+        console.log(`For rolled-up-date by ${timeframe}, the test is SUCCESS`);
     } else {
-        console.log(`For roll-up-date by ${timeframe}, the test is FAILURE`);
+        console.log(`For rolled-up-date by ${timeframe}, the test is FAILURE`);
     }
 });

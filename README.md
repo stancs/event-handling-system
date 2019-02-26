@@ -76,7 +76,7 @@ info: Express server listening on port 3000 {"timestamp":"2019-02-25 06:22:46"}
 info: Database connected {"timestamp":"2019-02-25 06:22:46"}
 ```
 
-For development purpose, 'npm run debug' would start the server with `debug` log level)
+For development purpose, 'npm run debug' would start the server with `debug` log level.
 
 ```
 administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm run debug
@@ -153,40 +153,78 @@ To test `Event Summary` request, plenty of sample data should be stored in advan
 To run this test script, run `npm run test`
 
 ```
-administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ node test.js
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm run test
+
+> backend-challenge-kh@1.0.0 test /home/administrator/code/coding-exercise/backend-challenge-kh
+> node src/batchTest.js
+
+========== Test Setup (START) ==========
+Sample Count = 100
+Randomly assigned types: enters(6), comments(64), highfives(19), leaves(11)
+From: 2019-01-01T06:00:00Z = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time) UTC
+To  : 2019-01-30T11:59:59Z = Wed Jan 30 2019 05:59:59 GMT-0600 (Central Standard Time) UTC
+sampleSet = 
+{ enters: 6, comments: 64, highfives: 19, leaves: 11 }
+========== Test Setup (END)    ==========
 ==== Clear Data Response: START ====
 statusCode = 200
 body = {"status":"ok"}
 ==== Clear Data Response: END ====
-Sample Count = 100
-Randomly assigned types: enters(13), comments(58), highfives(4), leaves(25)
-2019-01-01T06:00:00Z = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time) UTC
-2019-01-30T11:59:59Z = Wed Jan 30 2019 05:59:59 GMT-0600 (Central Standard Time) UTC
+{ date: '2019-01-23T01:30:33.630Z',
+  user: 'user_30',
+  message: null,
+  otheruser: 'user_52',
+  type: 'comment' }
+==== Submit Event Response: START ====
+statusCode = 200
+body = {"status":"ok"}
 
 ...
 
+        {
+            "date": "2019-01-11T16:36:12.456Z",
+            "user": "user_24",
+            "type": "comment",
+            "message": "message_375"
+        }
+    ]
+}
 ==== List Event Response: END ====
 SUCCESS: The number of events in ListEvent response is matching with the sample size
-==== Event Summary Response: START ====
-==== Event Summary Response: END ====
-For timeframe-day, the test is SUCCESS
-==== Event Summary Response: START ====
-==== Event Summary Response: END ====
-For timeframe-hour, the test is SUCCESS
-==== Event Summary Response: START ====
-==== Event Summary Response: END ====
-For timeframe-minute, the test is SUCCESS
+==== Event Summary (day) Response: START ====
+statusCode = 200
+==== Event Summary (day) Response: END ====
+For roll-up-date by day, the test is SUCCESS
+==== Event Summary (hour) Response: START ====
+statusCode = 200
+==== Event Summary (hour) Response: END ====
+For roll-up-date by hour, the test is SUCCESS
+==== Event Summary (minute) Response: START ====
+statusCode = 200
+==== Event Summary (minute) Response: END ====
+For roll-up-date by minute, the test is SUCCESS
+
 ```
 
 
 ## Note
-Due to timezone offset, roll-up-date might be changes. In the example, if the time is `1985-10-26T09:01:55Z`, the roll-up-dates are like this:
+Due to timezone offset, rolled-up-date might be changed. In the challenge sheet description, it shows that the rolled-up-date for `1985-10-26T09:01:55Z` as below:
 
 - Rolled up date for the day   : `1985-10-26T00:00:00Z`
 - Rolled up date for the hour  : `1985-10-26T09:00:00Z`
 - Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
-However, the timezone that I'm living is GMT-06:00. So if you roll up the date for the day, it would be 06:00AM. PostgresSQL do the same thing with DATE_TRUNC(...) function. 
+However, this is based on no timezone offset. So this doesn't work when the server is running with active timezone environment.
+
+For example, the timezone in Austin is GMT-06:00. So the time 06:00:00Z UTC means 00:00:00 in AUstin time as you can see as below:
+(Left is Date's ISO string and the right one is date description in the current timezone)
+
+```
+2019-01-01T06:00:00Z UTC = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time)
+2019-01-30T11:59:59Z UTC = Wed Jan 30 2019 05:59:59 GMT-0600 (Central Standard Time)
+```
+
+JavaScript will show date truncation as this:
 
 ```
 > var a = new Date();
@@ -199,11 +237,57 @@ undefined
 '2019-02-25T06:00:00.000Z'
 ```
 
-So if you run this program around Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' wll be like this:
+PostgresSQL will do the similar thing with DATE_TRUNC(...) function when time zone is set
+(Check the timezone offset is applied as `00:00:00-06`)
+
+```
+postgres=# SELECT 
+postgres-#             DATE_TRUNC('day', date) as date,
+postgres-#             COUNT(CASE type WHEN 'enter' THEN 1 ELSE NULL END) as enters,
+postgres-#             COUNT(CASE type WHEN 'leave' THEN 1 ELSE NULL END) as leaves,
+postgres-#             COUNT(CASE type WHEN 'comment' THEN 1 ELSE NULL END) as comments,
+postgres-#             COUNT(CASE type WHEN 'highfive' THEN 1 ELSE NULL END) as highfives
+postgres-#         FROM event WHERE date >= '2019-01-01T00:00:00Z' AND date <= '2019-01-30T23:59:59Z'
+postgres-#         GROUP BY DATE_TRUNC('day', date);
+          date          | enters | leaves | comments | highfives 
+------------------------+--------+--------+----------+-----------
+ 2019-01-12 00:00:00-06 |      0 |      0 |        2 |         1
+ 2019-01-14 00:00:00-06 |      1 |      0 |        4 |         2
+ 2019-01-03 00:00:00-06 |      0 |      0 |        3 |         2
+ 2019-01-24 00:00:00-06 |      0 |      0 |        4 |         0
+ 2019-01-25 00:00:00-06 |      1 |      0 |        1 |         1
+ 2019-01-20 00:00:00-06 |      0 |      0 |        4 |         1
+ 2019-01-18 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-04 00:00:00-06 |      0 |      0 |        7 |         0
+ 2019-01-17 00:00:00-06 |      0 |      0 |        3 |         2
+ 2019-01-07 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-19 00:00:00-06 |      0 |      0 |        1 |         0
+ 2019-01-02 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-21 00:00:00-06 |      0 |      0 |        6 |         1
+ 2019-01-08 00:00:00-06 |      0 |      0 |        2 |         1
+ 2019-01-01 00:00:00-06 |      1 |      0 |        2 |         0
+ 2019-01-23 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-06 00:00:00-06 |      0 |      0 |        5 |         2
+ 2019-01-09 00:00:00-06 |      0 |      0 |        3 |         1
+ 2019-01-10 00:00:00-06 |      0 |      0 |        4 |         0
+ 2019-01-29 00:00:00-06 |      0 |      0 |        2 |         1
+ 2019-01-13 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-26 00:00:00-06 |      0 |      0 |        3 |         1
+ 2019-01-11 00:00:00-06 |      0 |      0 |        1 |         1
+ 2019-01-05 00:00:00-06 |      0 |      0 |        1 |         0
+ 2019-01-27 00:00:00-06 |      0 |      0 |        1 |         3
+ 2019-01-22 00:00:00-06 |      1 |      0 |        2 |         0
+ 2019-01-15 00:00:00-06 |      0 |      0 |        2 |         0
+ 2019-01-16 00:00:00-06 |      1 |      0 |        1 |         1
+(28 rows)
+```
+
+So if you run this application in Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' wll be like this:
 
 - Rolled up date for the day   : `1985-10-26T06:00:00Z`
 - Rolled up date for the hour  : `1985-10-26T09:00:00Z`
 - Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
+The statistics and event summary are based on this logic.
 
 
