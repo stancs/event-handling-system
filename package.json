@@ -2,7 +2,7 @@
   "name": "backend-challenge-kh",
   "version": "1.0.0",
   "description": "Backend Programming Challenge",
-  "main": "server.js",
+  "main": "src/server.js",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
@@ -15,7 +15,7 @@
   "scripts": {
     "debug": "LOG_LEVEL='debug' npm start",
     "test": "npm run test",
-    "start": "PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node server.js"
+    "start": "PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node src/server.js"
   },
   "repository": {
     "type": "git",
