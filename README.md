@@ -1,6 +1,6 @@
 # Event Handling System (REST APIs using Express.js)
 
-This backend programming challenge has been implemented as a part of the interview process in my previous companies (2019). The system was implemented using Express.js and PostgreSQL as the main database.
+This backend programming challenge has been implemented as a part of the interview process in one of my previous companies (2019). The system was implemented using Express.js and PostgreSQL as the main database.
 
 ## Challenge
 
