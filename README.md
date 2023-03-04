@@ -1,5 +1,10 @@
-# kindhealth
-Backend Programming Challenge
+# Event Handling System (REST APIs using Express.js)
+
+This backend programming challenge has been implemented as a part of the interview process in my previous companies (2019). The system was implemented using Express.js and PostgreSQL as database
+
+## Challenge
+
+[Backend Challenge PDF](./backend_challenge.pdf)
 
 ## Presentation
 
@@ -8,6 +13,7 @@ Backend Programming Challenge
 ## Installing related NPM packages
 
 This program uses 3rd party npm packages as below:
+
 - body-parser
 - express
 - lodash
@@ -24,41 +30,51 @@ npm install
 ```
 
 ## PostgreSQL installation
-This application uses PostgresSQL as a database. In Ubuntu, the installation process is like this:
+
+This application uses PostgreSQL as a database. In Ubuntu, the installation process is like this:
 
 ### Install DB
+
 1. Install PostgreSQL and necessary server software
+
 ```
 sudo apt-get install postgresql postgresql-contrib
 ```
 
 2. Configure PostgreSQL to startup upon server boot
+
 ```
 sudo update-rc.d postgresql enable
 ```
 
 3. Start PostgreSQL
+
 ```
 sudo service postgresql start
 ```
+
 [https://www.godaddy.com/garage/how-to-install-postgresql-on-ubuntu-14-04/]
 
-
 ### Password Set
+
 On Windows and OS X, the default password is `postgres`, but in Ubuntu, there is no default password set
 
 1. Run the `psql` command from the postgres user account:
+
 ```
 sudo -u postgres psql postgres
 ```
 
 2. Set the password:
+
 ```
 \password postgres
 ```
+
 3. Enter the password (I set it as `passwd`)
 
 4. Close psql
+
 ```
 \q
 ```
@@ -67,9 +83,11 @@ sudo -u postgres psql postgres
 ]
 
 ## How to start the application
-To start the server, the user can enter 'npm start' 
+
+To start the server, the user can enter 'npm start'
 
 (default log level is `info`)
+
 ```
 administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm start
 
@@ -110,32 +128,33 @@ debug: DB Query Success {"timestamp":"2019-02-25 06:25:48"}
 ## How to run the test suite
 
 ### Individual test script
-`/script` folder contains bash shell script files to run individual HTTP GET/POST requests on the local server. 
 
-| shell script     | Test                 | Comments                                |
-| -----------------|:--------------------:| ---------------------------------------:|
-| event.sh         | Submit Event         |                                         |
-| event-error.sh   | Submit Event(error)  | POST parameter is missing (Failure test)|
-| clear.sh         | Clear Data           |                                         |
-| list.sh          | List Events          |                                         |
-| list-error.sh    | List Events(error)   | GET parameter is missing (Failure test) |
-| summary.sh       | Event Summary        |                                         |
-| summary-error.sh | Event Summary(error) | GET parameter is missing (Failure test) |
+`/script` folder contains bash shell script files to run individual HTTP GET/POST requests on the local server.
+
+| shell script     |         Test         |                                 Comments |
+| ---------------- | :------------------: | ---------------------------------------: |
+| event.sh         |     Submit Event     |                                          |
+| event-error.sh   | Submit Event(error)  | POST parameter is missing (Failure test) |
+| clear.sh         |      Clear Data      |                                          |
+| list.sh          |     List Events      |                                          |
+| list-error.sh    |  List Events(error)  |  GET parameter is missing (Failure test) |
+| summary.sh       |    Event Summary     |                                          |
+| summary-error.sh | Event Summary(error) |  GET parameter is missing (Failure test) |
 
 [Examples]
 
 ```
-administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./event.sh 
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./event.sh
 {"status":"ok"}
 ```
 
 ```
-administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary.sh 
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary.sh
 {"events":[{"date":"2019-01-01T09:00:00.000Z","enters":"1","leaves":"0","comments":"0","highfives":"0"}]}
 ```
 
 ```
-administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary-error.sh 
+administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$ ./summary-error.sh
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,6 +169,7 @@ administrator@lydia:~/code/coding-exercise/backend-challenge-kh/scripts$
 ```
 
 ### Batch Test for `Event Summary`
+
 To test `Event Summary` request, plenty of sample data should be stored in advance.
 
 `src/batchTest.js` is generating event data randomly with given sample sizes (default is set as 100) and send HTTP POST request to insert event data to the backend server. There are four types of events-`enter`, `comment`, `highfive`, and `leave`. The batch test script will generate one of these events randomly, and compute the summary beforehand so that the tester can compare it with the `Event Summary` responose.
@@ -167,7 +187,7 @@ Sample Count = 100
 Randomly assigned types: enters(6), comments(64), highfives(19), leaves(11)
 From: 2019-01-01T06:00:00Z = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time) UTC
 To  : 2019-01-30T11:59:59Z = Wed Jan 30 2019 05:59:59 GMT-0600 (Central Standard Time) UTC
-sampleSet = 
+sampleSet =
 { enters: 6, comments: 64, highfives: 19, leaves: 11 }
 ========== Test Setup (END)    ==========
 ==== Clear Data Response: START ====
@@ -210,12 +230,12 @@ For roll-up-date by minute, the test is SUCCESS
 
 ```
 
-
 ## Note
+
 Due to timezone offset, rolled-up-date might be changed. In the challenge sheet description, it shows that the rolled-up-date for `1985-10-26T09:01:55Z` as below:
 
-- Rolled up date for the day   : `1985-10-26T00:00:00Z`
-- Rolled up date for the hour  : `1985-10-26T09:00:00Z`
+- Rolled up date for the day : `1985-10-26T00:00:00Z`
+- Rolled up date for the hour : `1985-10-26T09:00:00Z`
 - Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
 However, this is based on no timezone offset. So this doesn't work when the server is running with active timezone environment.
@@ -245,7 +265,7 @@ PostgresSQL will do the similar thing with DATE_TRUNC(...) function when time zo
 (Check the timezone offset is applied as `00:00:00-06`)
 
 ```
-postgres=# SELECT 
+postgres=# SELECT
 postgres-#             DATE_TRUNC('day', date) as date,
 postgres-#             COUNT(CASE type WHEN 'enter' THEN 1 ELSE NULL END) as enters,
 postgres-#             COUNT(CASE type WHEN 'leave' THEN 1 ELSE NULL END) as leaves,
@@ -253,7 +273,7 @@ postgres-#             COUNT(CASE type WHEN 'comment' THEN 1 ELSE NULL END) as c
 postgres-#             COUNT(CASE type WHEN 'highfive' THEN 1 ELSE NULL END) as highfives
 postgres-#         FROM event WHERE date >= '2019-01-01T00:00:00Z' AND date <= '2019-01-30T23:59:59Z'
 postgres-#         GROUP BY DATE_TRUNC('day', date);
-          date          | enters | leaves | comments | highfives 
+          date          | enters | leaves | comments | highfives
 ------------------------+--------+--------+----------+-----------
  2019-01-12 00:00:00-06 |      0 |      0 |        2 |         1
  2019-01-14 00:00:00-06 |      1 |      0 |        4 |         2
@@ -288,10 +308,8 @@ postgres-#         GROUP BY DATE_TRUNC('day', date);
 
 So if you run this application in Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' wll be like this:
 
-- Rolled up date for the day   : `1985-10-26T06:00:00Z`
-- Rolled up date for the hour  : `1985-10-26T09:00:00Z`
+- Rolled up date for the day : `1985-10-26T06:00:00Z`
+- Rolled up date for the hour : `1985-10-26T09:00:00Z`
 - Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
 The statistics and event summary are based on this logic.
-
-
