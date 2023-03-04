@@ -1,6 +1,6 @@
 # Event Handling System (REST APIs using Express.js)
 
-This backend programming challenge has been implemented as a part of the interview process in my previous companies (2019). The system was implemented using Express.js and PostgreSQL as database
+This backend programming challenge has been implemented as a part of the interview process in my previous companies (2019). The system was implemented using Express.js and PostgreSQL as the main database.
 
 ## Challenge
 
@@ -87,18 +87,7 @@ sudo -u postgres psql postgres
 To start the server, the user can enter 'npm start'
 
 (default log level is `info`)
-
-```
-administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm start
-
-> backend-challenge-kh@1.0.0 start /home/administrator/code/coding-exercise/backend-challenge-kh
-> PGHOST='localhost' PGUSER='postgres' PGDATABASE='postgres' PGPASSWORD='passwd' PGPORT=5432 node server.js
-
-info: Express server listening on port 3000 {"timestamp":"2019-02-25 06:22:46"}
-info: Database connected {"timestamp":"2019-02-25 06:22:46"}
-```
-
-For development purpose, 'npm run debug' would start the server with `debug` log level.
+For development purposes, 'npm run debug' would start the server with `debug` log level.
 
 ```
 administrator@lydia:~/code/coding-exercise/backend-challenge-kh$ npm run debug
@@ -232,16 +221,16 @@ For roll-up-date by minute, the test is SUCCESS
 
 ## Note
 
-Due to timezone offset, rolled-up-date might be changed. In the challenge sheet description, it shows that the rolled-up-date for `1985-10-26T09:01:55Z` as below:
+Due to the timezone offset, rolled-up-date might be changed. In the challenge sheet description, it shows that the rolled-up-date for `1985-10-26T09:01:55Z` as below:
 
 - Rolled up date for the day : `1985-10-26T00:00:00Z`
 - Rolled up date for the hour : `1985-10-26T09:00:00Z`
 - Rolled up date for the minute: `1985-10-26T09:01:00Z`
 
-However, this is based on no timezone offset. So this doesn't work when the server is running with active timezone environment.
+However, this is based on no timezone offset. So this doesn't work when the server is running with an active timezone environment.
 
-For example, the timezone in Austin is GMT-06:00. So the time 06:00:00Z UTC means 00:00:00 in AUstin time as you can see as below:
-(Left is Date's ISO string and the right one is date description in the current timezone)
+For example, the timezone in Austin is GMT-06:00. So the time 06:00:00Z UTC means 00:00:00 in Austin time as you can see as below:
+(Left is Date's ISO string and the right one is the date description in the current timezone)
 
 ```
 2019-01-01T06:00:00Z UTC = Tue Jan 01 2019 00:00:00 GMT-0600 (Central Standard Time)
@@ -261,7 +250,7 @@ undefined
 '2019-02-25T06:00:00.000Z'
 ```
 
-PostgresSQL will do the similar thing with DATE_TRUNC(...) function when time zone is set
+PostgreSQL will do a similar thing with DATE_TRUNC(...) function when the time zone is set
 (Check the timezone offset is applied as `00:00:00-06`)
 
 ```
@@ -306,7 +295,7 @@ postgres-#         GROUP BY DATE_TRUNC('day', date);
 (28 rows)
 ```
 
-So if you run this application in Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' wll be like this:
+So if you run this application in the Austin area, the correct rolled-up-date for '1985-10-26T09:01:55Z' will be like this:
 
 - Rolled up date for the day : `1985-10-26T06:00:00Z`
 - Rolled up date for the hour : `1985-10-26T09:00:00Z`
